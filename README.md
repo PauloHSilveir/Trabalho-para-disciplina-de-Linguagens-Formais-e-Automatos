@@ -2,38 +2,38 @@
 Programa que coloca uma GLC na FNC.
 
 Para compilar:
-> g++ -Wall nome.cpp -o nome
+> g++ -Wall fnc.cpp -o fnc
 
 Chamada deve ser por linha de comando:
-> ./glc2fnc glc1.txt glc1 fnc.txt
+> ./fnc glc1Entrada.txt glc1Saida.txt
 
 As produções devem considerar os seguintes padrões:
-– Variáveis: [A-Z]
-– Terminais: [a-z]
-– Operador de definição: ->
-– Separador de regras: |
-– Lambda: .
+> – Variáveis: [A-Z]
+> – Terminais: [a-z]
+> – Operador de definição: ->
+> – Separador de regras: |
+> – Lambda: .
 
-Testes de gramática:
-S -> ABC
-A -> aA | .
-B -> bB | .
-C -> cC | .
+Teste as seguintes gramáticas:
+> S -> ABC
+> A -> aA | .
+> B -> bB | .
+> C -> cC | .
 
-S -> aS | bS | C | D
-C -> c | .
-D -> abc
-D -> .
+> S -> aS | bS | C | D
+> C -> c | .
+> D -> abc
+> D -> .
 
-S -> aAa
-A -> ABC
-B -> cC | Cc | CC
-C -> aba | .
+> S -> aAa
+> A -> ABC
+> B -> cC | Cc | CC
+> C -> aba | .
 
-S -> ACA | CA | AA | AC | A | C | .
-A -> aAa | aa | B | C
-B -> bB | b
-C -> cC | c
+> S -> ACA | CA | AA | AC | A | C | .
+> A -> aAa | aa | B | C
+> B -> bB | b
+> C -> cC | c
 
 S -> Aa | bB | AAA | C    
 A -> BD | cC | CB
