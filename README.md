@@ -8,7 +8,7 @@ Chamada deve ser por linha de comando:
 > ./glc2fnc glc1.txt glc1 fnc.txt
 
 As produções devem considerar os seguintes padrões:
-– Variáveis: [A-Z] (as variáveis criadas pelo seu algoritmo podem ser T1, T2, T3, etc.)
+– Variáveis: [A-Z]
 – Terminais: [a-z]
 – Operador de definição: ->
 – Separador de regras: |
