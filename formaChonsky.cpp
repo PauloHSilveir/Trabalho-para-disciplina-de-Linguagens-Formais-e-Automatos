@@ -5,9 +5,10 @@
 #include <unordered_map>
 #include <vector>
 #include <list>
-#include <set>
 #include <algorithm>
 #include <cmath>
+#include <map>
+#include <cctype>
 using namespace std;
 
 class FNC {
@@ -243,63 +244,7 @@ class FNC {
                 }
             }
         }
-        // vector<string> construirTerm() {
-        //     vector<string> TERM;
 
-        //     // Passo inicial: adiciona variáveis que geram diretamente terminais
-        //     for (const auto& producao : producoes) {
-        //         for (const auto& p : producao.second) {
-        //             bool geraTerminal = true;
-        //             for (char ch : p) {
-        //                 if (!islower(ch)) { // Verifica se todos os caracteres são terminais (minúsculos)
-        //                     geraTerminal = false;
-        //                     break;
-        //                 }
-        //             }
-        //             if (geraTerminal) {
-        //                 TERM.push_back(producao.first);
-        //                 break;
-        //             }
-        //         }
-        //     }
-
-        //     vector<string> PREV;
-
-        //     do {
-        //         PREV = TERM;
-
-
-        //         for (const auto& producao : producoes) {
-        //             const string& A = producao.first;
-
-        //             for (const auto& w : producao.second) {
-        //                 bool pertenceAoTERM = true;
-        //                 for (char ch : w) {
-        //                     string s(1, ch);
-        //                     if (find(PREV.begin(), PREV.end(), s) == PREV.end() && 
-        //                         find(alfabeto.begin(), alfabeto.end(), s) == alfabeto.end()) {
-        //                         pertenceAoTERM = false;
-        //                         break;
-        //                     }
-        //                 }
-        //                 if (pertenceAoTERM) {
-        //                     if (find(TERM.begin(), TERM.end(), A) == TERM.end()) {
-        //                         TERM.push_back(A);
-        //                     }
-        //                     break;
-        //                 }
-        //             }
-        //         }
-
-        //     } while (PREV != TERM);
-        //     cout << "Esse é o term porra \n ";
-        //     for(auto& var:TERM) {
-        //         cout << var << " ";
-
-        //     }
-        //     cout << endl;
-        //     return TERM;
-        // }
         vector<string> construirTerm() {
             vector<string> TERM;
             // Passo inicial: adiciona variáveis que geram diretamente terminais
@@ -401,6 +346,130 @@ class FNC {
                     ++it; // Avança o iterador normalmente
                 }
             }
+        }
+
+        vector<string> construirReach() {
+            vector<string> alcancaveis;
+            vector<string> prev;
+            alcancaveis.push_back(simboloInicial);
+
+            do {
+                vector<string> novo = alcancaveis;
+
+                // Novo conjunto passa a ser REACH - PREV
+                for (const auto& elem2 : prev) {
+                    for (int i = 0; i < novo.size(); ++i) {
+                        if (novo[i] == elem2) {
+                            novo.erase(novo.begin() + i); // Remova o elemento igual de 'novo'
+                            break; // Não precisa continuar o loop
+                        }
+                    }
+                }
+                
+                prev = alcancaveis;
+
+                // Para cada A em NEW (conjunto 'novo'), adicione as variáveis de w em REACH
+                for (const auto& A : novo) {
+                    if (producoes.find(A) != producoes.end()) {
+                        for (const auto& regra : producoes[A]) {
+                            for (char ch : regra) {
+                                if (isupper(ch)) { // Se for uma variável (letra maiúscula)
+                                    string variavel(1, ch);
+                                    if (find(alcancaveis.begin(), alcancaveis.end(), variavel) == alcancaveis.end()) {
+                                        alcancaveis.push_back(variavel);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+            } while (alcancaveis != prev);
+            
+            // Exemplo de como exibir as variáveis alcançáveis
+            cout << "Variáveis alcançáveis: ";
+            for (const auto& var : alcancaveis) {
+                cout << var << " ";
+            }
+            cout << endl;
+            return alcancaveis;
+        }
+        void removeNaoAlcancaveis(const vector<string>& alcancaveis) {
+            vector<string> naoAlcancaveis;
+
+            // Encontra as variáveis não alcançáveis
+            for (const auto& var : variaveis) {
+                if (find(alcancaveis.begin(), alcancaveis.end(), var) == alcancaveis.end()) {
+                    naoAlcancaveis.push_back(var);
+                }
+            }
+
+            // Remove produções associadas às variáveis não alcançáveis
+            for (auto it = producoes.begin(); it != producoes.end();) {
+                // Se a variável (producao.first) for não alcançável, remove a produção inteira
+                if (find(naoAlcancaveis.begin(), naoAlcancaveis.end(), it->first) != naoAlcancaveis.end()) {
+                    it = producoes.erase(it); // Remove a produção e avança o iterador
+                } else {
+                    ++it; // Avança o iterador normalmente
+                }
+            }
+        }
+        char novoSimbolo = 'Z'; // Inicia os novos símbolos não-terminais a partir de 'Z'
+
+        string gerarNovoSimbolo() {
+            // Gera um novo símbolo não-terminal
+            string novo(1, novoSimbolo);
+            --novoSimbolo;
+            return novo;
+        }
+
+        // Passo 1: Substituir todos os terminais em regras de tamanho > 1 por não-terminais
+        void substituirTerminais() {
+            map<char, string> terminalMap; // Mapeia terminais para novos não-terminais
+
+            for (auto& producao : producoes) {
+                for (auto& regra : producao.second) {
+                    if (regra.size() > 1) {
+                        for (int i = 0; i < regra.size(); ++i) {
+                            if (islower(regra[i])) { // Se for um terminal
+                                if (terminalMap.find(regra[i]) == terminalMap.end()) {
+                                    string novoNT = gerarNovoSimbolo();
+                                    terminalMap[regra[i]] = novoNT;
+                                    producoes[novoNT].push_back(string(1, regra[i]));
+                                }
+                                regra[i] = terminalMap[regra[i]][0]; // Substitui terminal por novo NT
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // Passo 2: Dividir todas as regras de tamanho > 2 em regras binárias
+        void dividirRegras() {
+            vector<pair<string, string>> novasProducoes; // Armazena novas produções temporariamente
+
+            for (auto& producao : producoes) {
+                for (auto& regra : producao.second) {
+                    while (regra.size() > 2) {
+                        string novoNT = gerarNovoSimbolo();
+                        string novaRegra = regra.substr(0, 2); // Pega os dois primeiros símbolos
+                        novasProducoes.push_back({novoNT, novaRegra});
+                        regra = novoNT + regra.substr(2); // Atualiza a regra
+                    }
+                }
+            }
+
+            // Adiciona as novas produções ao mapa de produções
+            for (const auto& producao : novasProducoes) {
+                producoes[producao.first].push_back(producao.second);
+            }
+        }
+
+        // Função principal para converter a gramática para Forma Normal de Chomsky
+        void converterParaFormaNormalDeChomsky() {
+            substituirTerminais();
+            dividirRegras();
         }
 
         void imprime() {
@@ -511,20 +580,30 @@ int main(int argc, char *argv[]) {
     
     fnc.removeProducaoLambda(anulaveis);
     cout << "Produções após remoção de λ:" << endl;
-    cout << "\n///////////////////////////////////////////////////\n";
+    cout << "///////////////////////////////////////////////////\n";
     fnc.imprime();
 
     fnc.substituirCadeias();
     cout << "Regras chain" << endl;
-    cout << "\n///////////////////////////////////////////////////\n";
+    cout << "///////////////////////////////////////////////////\n";
     fnc.imprime();
 
-    vector<string> Terminais = fnc.construirTerm();
+    vector<string> terminais = fnc.construirTerm();
     cout << "Terminais" << endl;
-    cout << "\n///////////////////////////////////////////////////\n";
-    fnc.removeNaoTerminais(Terminais);
+    cout << "///////////////////////////////////////////////////\n";
+    fnc.removeNaoTerminais(terminais);
     fnc.imprime();
 
+    vector<string> alcancaveis = fnc.construirReach();
+    fnc.removeNaoAlcancaveis(alcancaveis);
+    cout << "Alcancaveis" << endl;
+    cout << "///////////////////////////////////////////////////\n";
+    fnc.imprime();
+
+    cout << "Forma Normal de Chonsky porra" << endl;
+    cout << "///////////////////////////////////////////////////\n";
+    fnc.converterParaFormaNormalDeChomsky();
+    fnc.imprime();
     /*vector<vector<string>> power_set = fnc.conjuntoDasPartes(anulaveis);
 
     cout << "Conjunto das partes: " << endl;
