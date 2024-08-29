@@ -8,17 +8,18 @@ Programa que coloca uma GLC na FNC.
 > ./fnc glc1Entrada.txt glc1Saida.txt
 
 #As produções devem considerar os seguintes padrões:
-> – Variáveis: [A-Z]
-> – Terminais: [a-z]
-> – Operador de definição: ->
-> – Separador de regras: |
-> – Lambda: .
+<p>– Variáveis: [A-Z]</p> 
+<p>– Terminais: [a-z]</p>
+<p>– Operador de definição: -></p>
+<p>– Separador de regras: |</p>
+<p>– Lambda: .</p>
 
-#Teste as seguintes gramáticas:
-> S -> ABC
-> A -> aA | .
-> B -> bB | .
-> C -> cC | .
+#Teste como entrada as seguintes gramáticas:
+<p>S -> ABC</p>
+<p>A -> aA | .</p>
+<p>B -> bB | .</p>
+<p>C -> cC | .</p>
+<br>
 
 > S -> aS | bS | C | D
 > C -> c | .
@@ -29,11 +30,6 @@ Programa que coloca uma GLC na FNC.
 > A -> ABC
 > B -> cC | Cc | CC
 > C -> aba | .
-
-> S -> ACA | CA | AA | AC | A | C | .
-> A -> aAa | aa | B | C
-> B -> bB | b
-> C -> cC | c
 
 > S -> Aa | bB | AAA | C    
 > A -> BD | cC | CB
