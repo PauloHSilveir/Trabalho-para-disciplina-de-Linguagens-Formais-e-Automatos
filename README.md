@@ -20,19 +20,19 @@ Programa que coloca uma GLC na FNC.
 <p>B -> bB | .</p>
 <p>C -> cC | .</p>
 <br>
-
-> S -> aS | bS | C | D
-> C -> c | .
-> D -> abc
-> D -> .
-
-> S -> aAa
-> A -> ABC
-> B -> cC | Cc | CC
-> C -> aba | .
-
-> S -> Aa | bB | AAA | C    
-> A -> BD | cC | CB
-> B -> BbB | aB | bBD | CB
-> C -> aA | b | .
-> D -> AcC | cA | .
+<p>S -> aS | bS | C | D</p>
+<p>C -> c | .</p>
+<p>D -> abc</p>
+<p>D -> .</p>
+<br>
+<p>S -> aAa</p>
+<p>A -> ABC</p>
+<p>B -> cC | Cc | CC</p>
+<p>C -> aba | .</p>
+<br>
+<p>S -> Aa | bB | AAA | C</p>
+<p>A -> BD | cC | CB</p>
+<p>B -> BbB | aB | bBD | CB</p>
+<p>C -> aA | b | .</p>
+<p>D -> AcC | cA | .</p>
+<br>
